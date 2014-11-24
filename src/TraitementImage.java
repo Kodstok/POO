@@ -89,6 +89,8 @@ public class TraitementImage {
 	{
 		double tmp,l;
 		Coord res=null;
+		int test = 0;
+		System.out.println(ptVertG.size()+":"+ptVertD.size());
 		for(Coord a : ptVertG)
 		{
 			tmp = calculCoorelation(a,ptVertD.elementAt(0));
@@ -99,12 +101,15 @@ public class TraitementImage {
 				{
 					tmp = l;
 					res = b;
-					System.out.println(""+a + b+" : "+l);
+					
 				}
+				test++;
+				System.out.println(""+a + b+" : "+l);
 				
 			}
 			map.put(a, res);
 		}
+		System.out.println("nb comparaisons : "+test);
 	}
 	private int moyen(BufferedImage img, int n, Coord a)
 	{
@@ -114,7 +119,8 @@ public class TraitementImage {
 		{
 			for(int j=-n; j< n;j++ )
 			{
-				res += imageG.getRGB(a.x+i, a.y+j);
+				Color d = new Color(imageG.getRGB(a.x+i, a.y+j));
+				res += d.getBlue() ;
 				c++;
 			}
 		}
@@ -124,19 +130,20 @@ public class TraitementImage {
 	{
 		
 		double res=0;
-		int n = 40;
+		int n = 100;
 		int mimgL = moyen(imageG,n,a);
 		int mimgR = moyen(imageD,n,b);
 		for(int i =-n; i < n;i++)
 		{
 			for(int j=-n; j< n;j++ )
 			{
-				res += (imageG.getRGB(a.x+i, a.y+j)-mimgL)*
-						(imageD.getRGB(b.x+i, b.y+j)-mimgR);
+				Color c = new Color(imageG.getRGB(a.x+i, a.y+j));
+				Color d = new Color(imageD.getRGB(b.x+i, b.y+j));
+				res += ( c.getBlue()-mimgL)*
+						(d.getBlue()-mimgR);
 			}
 		}
-		return res*1/((2*n+1)*(2*n+1));
-		
+		return res*1/((2*n+1)*(2*n+1)*mimgL*mimgR);
 	}
 
 }
