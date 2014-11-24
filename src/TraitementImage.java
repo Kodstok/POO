@@ -87,37 +87,55 @@ public class TraitementImage {
 	
 	private void chercherCorespondance()
 	{
-		double tmp;
+		double tmp,l;
 		Coord res=null;
 		for(Coord a : ptVertG)
 		{
 			tmp = calculCoorelation(a,ptVertD.elementAt(0));
 			for(Coord b: ptVertD)
 			{
-				if(calculCoorelation(a,b)>tmp)
+				l = calculCoorelation(a,b);
+				if(l>tmp)
 				{
-					tmp = calculCoorelation(a,b);
+					tmp = l;
 					res = b;
+					System.out.println(""+a + b+" : "+l);
 				}
 				
 			}
 			map.put(a, res);
 		}
 	}
-	
-	private double calculCoorelation(Coord a,Coord b)
+	private int moyen(BufferedImage img, int n, Coord a)
 	{
-		double res=0;
-		int n = 30;
+		int res=0,c=0;
+		
 		for(int i =-n; i < n;i++)
 		{
 			for(int j=-n; j< n;j++ )
 			{
-				res = (imageG.getRGB(a.x+i, a.y+j)-imageG.getRGB(a.x,a.y))*
-						(imageD.getRGB(b.x+i, b.y+j)-imageD.getRGB(b.x,b.y));
+				res += imageG.getRGB(a.x+i, a.y+j);
+				c++;
 			}
 		}
-		return res;
+		return res/c;
+	}
+	private double calculCoorelation(Coord a,Coord b)
+	{
+		
+		double res=0;
+		int n = 40;
+		int mimgL = moyen(imageG,n,a);
+		int mimgR = moyen(imageD,n,b);
+		for(int i =-n; i < n;i++)
+		{
+			for(int j=-n; j< n;j++ )
+			{
+				res = (imageG.getRGB(a.x+i, a.y+j)-mimgL)*
+						(imageD.getRGB(b.x+i, b.y+j)-mimgR);
+			}
+		}
+		return res*1/((2*n+1)*(2*n+1));
 		
 	}
 
