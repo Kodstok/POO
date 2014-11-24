@@ -131,7 +131,7 @@ public class TraitementImage {
 		{
 			for(int j=-n; j< n;j++ )
 			{
-				res = (imageG.getRGB(a.x+i, a.y+j)-mimgL)*
+				res += (imageG.getRGB(a.x+i, a.y+j)-mimgL)*
 						(imageD.getRGB(b.x+i, b.y+j)-mimgR);
 			}
 		}
