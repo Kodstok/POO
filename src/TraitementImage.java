@@ -84,6 +84,17 @@ public class TraitementImage {
 			return false;
 		}
 	}
+	int cptptvg(Vector<Coord> vec,Coord a)
+	{
+		int s = 30;
+		int res=0;
+		for(Coord c : vec)
+		{
+			if(Math.abs(a.y-c.y)<s && a.x>c.y)
+				res++;
+		}
+		return res;
+	}
 	
 	private void chercherCorespondance()
 	{
@@ -108,7 +119,12 @@ public class TraitementImage {
 				System.out.println(""+a + b+" : "+l);
 				
 			}
-			map.put(a, res);
+			int ptg1=cptptvg(ptVertG,a),ptg2=cptptvg(ptVertD,res);
+			System.out.println(""+ptg1+", "+ ptg2);
+			if(ptg1==ptg2)
+				map.put(a, res);
+			else
+				map.put(a, null);
 		}
 		System.out.println("nb comparaisons : "+test);
 	}
@@ -187,8 +203,8 @@ public class TraitementImage {
 			}
 		}
 		//return res*1/((2*n+1)*(2*n+1)*mimgL*mimgR);
-		/* En fait, le prof avait expliqu�� qu'on peut simplifier l'��quation. 
-		 * Dans notre cas, puisque la cam��ra reste perpendiculaire au mur pour
+		/* En fait, le prof avait expliqu������ qu'on peut simplifier l'������quation. 
+		 * Dans notre cas, puisque la cam������ra reste perpendiculaire au mur pour
 		 * les deux photos, on peut mettre K=1, ce qui simplifie pas mal... */
 		return res;
 	}
