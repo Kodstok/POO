@@ -159,6 +159,7 @@ public class TraitementImage {
 				sig1= (c.getRed()-e)*(c.getRed()-e);
 			}
 		}
+		sig1=sig1/((2*n+1)*(2*m+1));
 		for(int i =-n; i < n;i++)
 		{
 			
@@ -169,6 +170,7 @@ public class TraitementImage {
 				sig2 +=  (d.getRed()-f)*(d.getRed()-f);
 			}
 		}
+		sig2=sig2/((2*n+1)*(2*m+1));
 		for(int i =-n; i < n;i++)
 		{
 			
