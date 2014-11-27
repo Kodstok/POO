@@ -93,10 +93,11 @@ public class TraitementImage {
 		System.out.println(ptVertG.size()+":"+ptVertD.size());
 		for(Coord a : ptVertG)
 		{
-			tmp = calculCoorelation(a,ptVertD.elementAt(0));
+			tmp = corelationTest(a,ptVertD.elementAt(0));
+			res=ptVertD.elementAt(0);
 			for(Coord b: ptVertD)
 			{
-				l = calculCoorelation(a,b);
+				l = corelationTest(a,b);
 				if(l>tmp)
 				{
 					tmp = l;
@@ -111,41 +112,83 @@ public class TraitementImage {
 		}
 		System.out.println("nb comparaisons : "+test);
 	}
-	private int moyen(BufferedImage img, int n, Coord a)
+	private int moyen(BufferedImage img, int n,int m, Coord a)
 	{
 		int res=0,c=0;
 		
 		for(int i =-n; i < n;i++)
 		{
-			for(int j=-n; j< n;j++ )
+			for(int j=-m; j< n;j++ )
 			{
 				Color d = new Color(imageG.getRGB(a.x+i, a.y+j));
-				res += d.getBlue() ;
+				res += d.getRed() ;
 				c++;
 			}
 		}
 		return res/c;
 	}
+	private double corelationTest(Coord a,Coord b)
+	{
+		double res=0,sig1=0,sig2=0;
+		int n = 40;
+		int m = 80;
+		int e =moyen(imageG,n,m,a);
+		int f =moyen(imageD,n,m,a);
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				Color c = new Color(imageG.getRGB(a.x+i, a.y+j));
+				sig1= (c.getRed()-e)*(c.getRed()-e);
+			}
+		}
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				Color d = new Color(imageD.getRGB(b.x+i, b.y+j));
+				
+				sig2 +=  (d.getRed()-f)*(d.getRed()-f);
+			}
+		}
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				Color c = new Color(imageG.getRGB(a.x+i, a.y+j));
+				Color d = new Color(imageD.getRGB(b.x+i, b.y+j));
+				
+				res +=  (c.getRed()-e)*(d.getRed()-e);
+			}
+		}
+		return res*1/(sig1*sig2);
+	}
 	private double calculCoorelation(Coord a,Coord b)
 	{
 		
 		double res=0;
-		int n = 100;
-		int mimgL = moyen(imageG,n,a);
-		int mimgR = moyen(imageD,n,b);
+		int n = 30;
+	
+		Color e = new Color(imageG.getRGB(a.x, a.y));
+		Color f = new Color(imageG.getRGB(b.x, b.y));
 		for(int i =-n; i < n;i++)
 		{
+			
 			for(int j=-n; j< n;j++ )
 			{
 				Color c = new Color(imageG.getRGB(a.x+i, a.y+j));
 				Color d = new Color(imageD.getRGB(b.x+i, b.y+j));
-				res += ( c.getBlue()-mimgL)*
-						(d.getBlue()-mimgR);
+				
+				res += ( c.getBlue()-e.getBlue())*
+						(d.getBlue()-f.getBlue());
 			}
 		}
 		//return res*1/((2*n+1)*(2*n+1)*mimgL*mimgR);
-		/* En fait, le prof avait expliqué qu'on peut simplifier l'équation. 
-		 * Dans notre cas, puisque la caméra reste perpendiculaire au mur pour
+		/* En fait, le prof avait expliqu�� qu'on peut simplifier l'��quation. 
+		 * Dans notre cas, puisque la cam��ra reste perpendiculaire au mur pour
 		 * les deux photos, on peut mettre K=1, ce qui simplifie pas mal... */
 		return res;
 	}
