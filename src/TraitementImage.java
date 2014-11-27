@@ -143,7 +143,11 @@ public class TraitementImage {
 						(d.getBlue()-mimgR);
 			}
 		}
-		return res*1/((2*n+1)*(2*n+1)*mimgL*mimgR);
+		//return res*1/((2*n+1)*(2*n+1)*mimgL*mimgR);
+		/* En fait, le prof avait expliqué qu'on peut simplifier l'équation. 
+		 * Dans notre cas, puisque la caméra reste perpendiculaire au mur pour
+		 * les deux photos, on peut mettre K=1, ce qui simplifie pas mal... */
+		return res;
 	}
 
 }
