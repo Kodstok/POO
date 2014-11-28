@@ -6,18 +6,16 @@ import java.util.Vector;
 
 
 public class TraitementImage {
-	BufferedImage imageG;
-	Vector<Coord> ptVertG;
-	BufferedImage imageD;
-	Vector<Coord> ptVertD;
+	ImagePointVert imageG;
+	ImagePointVert imageD;
 	HashMap<Coord,Coord> map = new HashMap<Coord,Coord>();
 	
 	public TraitementImage( BufferedImage imageG, BufferedImage imageD)
 	{
-		this.imageG = imageG;
-		this.imageD = imageD;
-		ptVertG = chercherPtVert(imageG);
-		ptVertD = chercherPtVert(imageD);
+		this.imageG = new ImagePointVert(imageG);
+		this.imageD = new ImagePointVert(imageD);
+		this.imageG.chercherPtVert();
+		this.imageD.chercherPtVert();
 		chercherCorespondance();
 	}
 	
@@ -26,89 +24,22 @@ public class TraitementImage {
 		return map.toString();
 	}
 	
-	private Vector<Coord> chercherPtVert(BufferedImage img)
-	{
-		Vector<Coord> res = new Vector<Coord>();
-		for(int i =0;i< img.getWidth();i++)
-		{
-			for(int j = 0; j < img.getHeight();j++)
-			{
-				if( estVert(img,i,j) && estCentre(img,i,j))
-				{
-					res.add(new Coord(i,j));
 
-				}
-			}
-		}
-		return res;
-	}
-
-	private boolean estCentre(BufferedImage img, int i, int j) {
-		int haut,bas,gauche,droite;
-		haut = cpt(img,i,j,0,1);
-		bas = cpt(img,i,j,0,-1);
-		gauche = cpt(img,i,j,-1,0);
-		droite = cpt(img,i,j,1,0);
-		if(((haut-bas)== 0 || (haut-bas)== 1) && 
-				((gauche-droite)==0 ||(gauche-droite)==1))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	private int cpt(BufferedImage img, int i, int j,int incrementi,int incrementj) {
-		int res=0;
-		i=i+incrementi;
-		j=j+ incrementj;
-		while(estVert(img,i,j))
-		{
-			res++;
-			i=i+incrementi;
-			j=j+incrementj;
-		}
-		return res;
-	}
-
-	private boolean estVert(BufferedImage img, int i, int j) {
-		Color c = new Color(img.getRGB(i, j));
-		if(c.getBlue()< 10 && c.getGreen()>200 && c.getRed()<10)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	int cptptvg(Vector<Coord> vec,Coord a)
-	{
-		int s = 30;
-		int res=0;
-		for(Coord c : vec)
-		{
-			if(Math.abs(a.y-c.y)<s && a.x>c.y)
-				res++;
-		}
-		return res;
-	}
+	
 	
 	private void chercherCorespondance()
 	{
 		double tmp,l;
 		Coord res=null;
 		int test = 0;
-		System.out.println(ptVertG.size()+":"+ptVertD.size());
-		for(Coord a : ptVertG)
+		System.out.println(imageG.ptVert.size()+":"+imageD.ptVert.size());
+		for(Coord a : imageG.ptVert)
 		{
-			tmp = corelationTest(a,ptVertD.elementAt(0));
-			res=ptVertD.elementAt(0);
-			for(Coord b: ptVertD)
+			tmp = corelationBlue(a,imageD.ptVert.elementAt(0));
+			res=imageD.ptVert.elementAt(0);
+			for(Coord b: imageD.ptVert)
 			{
-				l = corelationTest(a,b);
+				l = corelationBlue(a,b);
 				if(l>tmp)
 				{
 					tmp = l;
@@ -119,44 +50,25 @@ public class TraitementImage {
 				System.out.println(""+a + b+" : "+l);
 				
 			}
-			int ptg1=cptptvg(ptVertG,a),ptg2=cptptvg(ptVertD,res);
-			System.out.println(""+ptg1+", "+ ptg2);
-			if(ptg1==ptg2)
-				map.put(a, res);
-			else
-				map.put(a, null);
+			System.out.println();
+			map.put(a, res);
 		}
 		System.out.println("nb comparaisons : "+test);
 	}
-	private int moyen(BufferedImage img, int n,int m, Coord a)
-	{
-		int res=0,c=0;
-		
-		for(int i =-n; i < n;i++)
-		{
-			for(int j=-m; j< n;j++ )
-			{
-				Color d = new Color(imageG.getRGB(a.x+i, a.y+j));
-				res += d.getRed() ;
-				c++;
-			}
-		}
-		return res/c;
-	}
+	
 	private double corelationTest(Coord a,Coord b)
 	{
 		double res=0,sig1=0,sig2=0;
-		int n = 40;
-		int m = 80;
-		int e =moyen(imageG,n,m,a);
-		int f =moyen(imageD,n,m,a);
+		int n = 50;
+		int m = 100;
+		int e =imageG.moyen(n,m,a);
+		int f =imageD.moyen(n,m,a);
 		for(int i =-n; i < n;i++)
 		{
 			
 			for(int j=-m; j< m;j++ )
 			{
-				Color c = new Color(imageG.getRGB(a.x+i, a.y+j));
-				sig1= (c.getRed()-e)*(c.getRed()-e);
+				sig1+= (imageG.getGrey(a.x+i, a.y+j)-e)*(imageG.getGrey(a.x+i,a.y+ j)-e);
 			}
 		}
 		sig1=sig1/((2*n+1)*(2*m+1));
@@ -165,9 +77,8 @@ public class TraitementImage {
 			
 			for(int j=-m; j< m;j++ )
 			{
-				Color d = new Color(imageD.getRGB(b.x+i, b.y+j));
 				
-				sig2 +=  (d.getRed()-f)*(d.getRed()-f);
+				sig2 +=  (imageD.getGrey(b.x+i,b.y+ j)-f)*(imageD.getGrey(b.x+i,b.y+ j)-f);
 			}
 		}
 		sig2=sig2/((2*n+1)*(2*m+1));
@@ -176,10 +87,7 @@ public class TraitementImage {
 			
 			for(int j=-m; j< m;j++ )
 			{
-				Color c = new Color(imageG.getRGB(a.x+i, a.y+j));
-				Color d = new Color(imageD.getRGB(b.x+i, b.y+j));
-				
-				res +=  (c.getRed()-e)*(d.getRed()-e);
+				res +=  (imageG.getGrey(a.x+i,a.y+ j)-e)*(imageD.getGrey(b.x+i, b.y+j)-e);
 			}
 		}
 		return res*1/(sig1*sig2);
@@ -190,18 +98,19 @@ public class TraitementImage {
 		double res=0;
 		int n = 30;
 	
-		Color e = new Color(imageG.getRGB(a.x, a.y));
-		Color f = new Color(imageG.getRGB(b.x, b.y));
+		Color e = new Color(imageG.img.getRGB(a.x, a.y));
+		Color f = new Color(imageG.img.getRGB(b.x, b.y));
 		for(int i =-n; i < n;i++)
 		{
 			
 			for(int j=-n; j< n;j++ )
 			{
-				Color c = new Color(imageG.getRGB(a.x+i, a.y+j));
-				Color d = new Color(imageD.getRGB(b.x+i, b.y+j));
+				Color c = new Color(imageG.img.getRGB(a.x+i, a.y+j));
+				Color d = new Color(imageD.img.getRGB(b.x+i, b.y+j));
 				
 				res += ( c.getBlue()-e.getBlue())*
 						(d.getBlue()-f.getBlue());
+				
 			}
 		}
 		//return res*1/((2*n+1)*(2*n+1)*mimgL*mimgR);
@@ -209,6 +118,42 @@ public class TraitementImage {
 		 * Dans notre cas, puisque la cam������ra reste perpendiculaire au mur pour
 		 * les deux photos, on peut mettre K=1, ce qui simplifie pas mal... */
 		return res;
+	}
+	private double corelationBlue(Coord a,Coord b)
+	{
+		double res=0,sig1=0,sig2=0;
+		int n = 50;
+		int m = 100;
+		int e =imageG.moyen(n,m,a);
+		int f =imageD.moyen(n,m,a);
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				sig1+= (imageG.getBlue(a.x+i, a.y+j)-e)*(imageG.getBlue(a.x+i,a.y+ j)-e);
+			}
+		}
+		sig1=sig1/((2*n+1)*(2*m+1));
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				
+				sig2 +=  (imageD.getBlue(b.x+i,b.y+ j)-f)*(imageD.getBlue(b.x+i,b.y+ j)-f);
+			}
+		}
+		sig2=sig2/((2*n+1)*(2*m+1));
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				res +=  (imageG.getBlue(a.x+i,a.y+ j)-e)*(imageD.getBlue(b.x+i, b.y+j)-e);
+			}
+		}
+		return res*1/(sig1*sig2);
 	}
 
 }
