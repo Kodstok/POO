@@ -16,7 +16,8 @@ public class TraitementImage {
 		this.imageD = new ImagePointVert(imageD);
 		this.imageG.chercherPtVert();
 		this.imageD.chercherPtVert();
-		chercherCorespondance();
+		//chercherCorespondance();
+		chercherCorespondanceSurLigne();
 	}
 	
 	public String toString()
@@ -24,8 +25,36 @@ public class TraitementImage {
 		return map.toString();
 	}
 	
-
-	
+	private void chercherCorespondanceSurLigne()
+	{
+		double tmp,l;
+		Coord res=null;
+		int test = 0;
+		System.out.println(imageG.ptVert.size()+":"+imageD.ptVert.size());
+		for(Coord a : imageG.ptVert)
+		{
+			Vector<Coord> ptLigne = imageD.getPtLigne(a);
+			tmp = 1;
+			res=null;
+			System.out.println("points sur la même ligne : "+ptLigne.size());
+			for(Coord b: ptLigne)
+			{
+				l = corelationRed(a,b);
+				if(l>=tmp )
+				{
+					tmp = l;
+					res = b;
+					
+				}
+				test++;
+				System.out.println(""+a + b+" : "+l);
+				
+			}
+			System.out.println();
+			map.put(a, res);
+		}
+		System.out.println("nb comparaisons : "+test);
+	}
 	
 	private void chercherCorespondance()
 	{
@@ -35,11 +64,11 @@ public class TraitementImage {
 		System.out.println(imageG.ptVert.size()+":"+imageD.ptVert.size());
 		for(Coord a : imageG.ptVert)
 		{
-			tmp = corelationBlue(a,imageD.ptVert.elementAt(0));
+			tmp = corelationRed(a,imageD.ptVert.elementAt(0));
 			res=imageD.ptVert.elementAt(0);
 			for(Coord b: imageD.ptVert)
 			{
-				l = corelationBlue(a,b);
+				l = corelationRed(a,b);
 				if(l>tmp)
 				{
 					tmp = l;
@@ -56,7 +85,7 @@ public class TraitementImage {
 		System.out.println("nb comparaisons : "+test);
 	}
 	
-	private double corelationTest(Coord a,Coord b)
+	private double corelationGrey(Coord a,Coord b)
 	{
 		double res=0,sig1=0,sig2=0;
 		int n = 50;
@@ -151,6 +180,78 @@ public class TraitementImage {
 			for(int j=-m; j< m;j++ )
 			{
 				res +=  (imageG.getBlue(a.x+i,a.y+ j)-e)*(imageD.getBlue(b.x+i, b.y+j)-e);
+			}
+		}
+		return res*1/(sig1*sig2);
+	}
+	private double corelationGreen(Coord a,Coord b)
+	{
+		double res=0,sig1=0,sig2=0;
+		int n = 50;
+		int m = 100;
+		int e =imageG.moyen(n,m,a);
+		int f =imageD.moyen(n,m,a);
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				sig1+= (imageG.getGreen(a.x+i, a.y+j)-e)*(imageG.getGreen(a.x+i,a.y+ j)-e);
+			}
+		}
+		sig1=sig1/((2*n+1)*(2*m+1));
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				
+				sig2 +=  (imageD.getGreen(b.x+i,b.y+ j)-f)*(imageD.getGreen(b.x+i,b.y+ j)-f);
+			}
+		}
+		sig2=sig2/((2*n+1)*(2*m+1));
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				res +=  (imageG.getGreen(a.x+i,a.y+ j)-e)*(imageD.getGreen(b.x+i, b.y+j)-e);
+			}
+		}
+		return res*1/(sig1*sig2);
+	}
+	private double corelationRed(Coord a,Coord b)
+	{
+		double res=0,sig1=0,sig2=0;
+		int n = 50;
+		int m = 100;
+		int e =imageG.moyen(n,m,a);
+		int f =imageD.moyen(n,m,a);
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				sig1+= (imageG.getRed(a.x+i, a.y+j)-e)*(imageG.getRed(a.x+i,a.y+ j)-e);
+			}
+		}
+		sig1=sig1/((2*n+1)*(2*m+1));
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				
+				sig2 +=  (imageD.getRed(b.x+i,b.y+ j)-f)*(imageD.getRed(b.x+i,b.y+ j)-f);
+			}
+		}
+		sig2=sig2/((2*n+1)*(2*m+1));
+		for(int i =-n; i < n;i++)
+		{
+			
+			for(int j=-m; j< m;j++ )
+			{
+				res +=  (imageG.getRed(a.x+i,a.y+ j)-e)*(imageD.getRed(b.x+i, b.y+j)-e);
 			}
 		}
 		return res*1/(sig1*sig2);

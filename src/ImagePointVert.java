@@ -121,5 +121,15 @@ public class ImagePointVert  {
 		}
 		return res/c;
 	}
+	public Vector<Coord> getPtLigne(Coord a) {
+		Vector<Coord> res= new Vector<Coord>();
+		int s = 25;
+		for(Coord c : ptVert)
+		{
+			if(Math.abs(a.y-c.y)<s)
+				res.add(c);
+		}
+		return res;
+	}
 
 }
