@@ -1,34 +1,33 @@
-import java.awt.GraphicsConfiguration;
-import java.awt.HeadlessException;
-
-import javax.swing.JFrame;
-
-
-
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 public class Fenetre extends JFrame {
 
 	private imagePanel imageG;
 	private imagePanel imageD;
+	
 	// dimensions pour une image
-	private int largeur = 480, hauteur = 360; 
+	private int largeur = 2560, hauteur = 1920; 
+	
+	// on divise toutes les tailles en pixel par ce nombre 
+	// pour pouvoir afficher les images à l'ecran
+	private int coeffDeReduction = 4;
 
 	public Fenetre() throws HeadlessException {
 		super("Image de fond");
-		
+		largeur /= coeffDeReduction;
+		hauteur /= coeffDeReduction;
 		imageG = new imagePanel("book/book_left.jpg");
 		imageD = new imagePanel("book/book_right.jpg");
 		this.getContentPane().setLayout(new BorderLayout());
@@ -44,12 +43,13 @@ public class Fenetre extends JFrame {
 		this.setVisible(true);
 	}
 	
-	public void marquerPointG(Coord a) {
-		this.imageG.marquerPoint(a);
-	}
-	
-	public void marquerPointD(Coord a) {
-		this.imageD.marquerPoint(a);
+	public void marquerCouplePoints(Entry<Coord, Coord> couple) {
+		Coord pointImgG = couple.getKey();
+		Coord pointImgD = couple.getValue();
+		if (pointImgG != null && pointImgD != null) {
+			imageG.marquerPoint(pointImgG);
+			imageD.marquerPoint(pointImgD);
+		}
 	}
 	
 	public class imagePanel extends JPanel {
@@ -65,18 +65,13 @@ public class Fenetre extends JFrame {
 		}
 
 		public void paint(Graphics g) {
-			System.out.println("appel a la fonction paint");
 			g.drawImage(img, 0, 0, largeur, hauteur, this);
 		}
 		
-		public void marquerPoint (Coord a) {
-			if (a.y > hauteur || a.x >largeur*2) {
-				System.out.println("Attention, les coordonnes "+ a.toString() +" sont hors de la fenetre.");
-				return;
-			}
-			System.out.println("appel a la fonction marquerPoint");
+		public void marquerPoint (Coord point) {
+			System.out.println("Appel a la fonction marquerPoint pour " + point.toString());
 			Graphics2D g = img.createGraphics();
-			g.fillOval(a.x, a.y, 20, 20);
+			g.fillOval(point.x-10, point.y-10, 20, 20);
 			g.dispose();
 		}
 	}

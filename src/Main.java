@@ -1,10 +1,11 @@
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 
 
 public class Main {
@@ -35,23 +36,33 @@ public class Main {
 		try {
 			bookLeft = ImageIO.read(new File("book/book_left.jpg"));
 			bookRight = ImageIO.read(new File("book/book_right.jpg"));
-			
+/*			
 			bottleLeft = ImageIO.read(new File("bottle/bottle_left.jpg"));
 			bottleRight = ImageIO.read(new File("bottle/bottle_right.jpg"));
 			
 			emptyLeft = ImageIO.read(new File("empty/empty_right.jpg"));
 			emptyRight = ImageIO.read(new File("empty/empty_right.jpg"));
-			
+*/			
 			
 		} catch (IOException e) {
+			System.out.println("Probleme dans la lecture des fichiers : " + e.toString());
 		}
 		
-		TraitementImage i = new TraitementImage(bookLeft,bookRight);
-		System.out.println(i.toString());
+		TraitementImage t = new TraitementImage(bookLeft,bookRight);
+		System.out.println(t.toString());
+		
+
+		Fenetre f = new Fenetre();
+
+		for(Entry<Coord, Coord> entry : t.map.entrySet())
+			f.marquerCouplePoints(entry);
+			
+		f.afficher();
+		
+		
 		//TraitementImage j = new TraitementImage(bottleLeft,bottleRight);
 
 		//TraitementImage k = new TraitementImage(emptyLeft,emptyRight);
-		
 		
 
 	}
