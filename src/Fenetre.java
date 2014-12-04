@@ -1,8 +1,11 @@
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +19,7 @@ public class Fenetre extends JFrame {
 
 	private imagePanel imageG;
 	private imagePanel imageD;
+	private int nbPtsAjoutes = 0;
 	
 	// dimensions pour une image
 	private int largeur = 2560, hauteur = 1920; 
@@ -47,8 +51,13 @@ public class Fenetre extends JFrame {
 		Coord pointImgG = couple.getKey();
 		Coord pointImgD = couple.getValue();
 		if (pointImgG != null && pointImgD != null) {
-			imageG.marquerPoint(pointImgG);
-			imageD.marquerPoint(pointImgD);
+			nbPtsAjoutes++;
+			imageG.marquerPoint(pointImgG, nbPtsAjoutes);
+			imageD.marquerPoint(pointImgD, nbPtsAjoutes);
+			
+//			Graphics2D g = this.imageG.img.createGraphics();
+//			g.drawLine(pointImgG.x, pointImgG.y, pointImgD.x+largeur, pointImgD.y);
+//			g.dispose();
 		}
 	}
 	
@@ -68,10 +77,15 @@ public class Fenetre extends JFrame {
 			g.drawImage(img, 0, 0, largeur, hauteur, this);
 		}
 		
-		public void marquerPoint (Coord point) {
+		public void marquerPoint (Coord point, int numero) {
 			System.out.println("Appel a la fonction marquerPoint pour " + point.toString());
 			Graphics2D g = img.createGraphics();
+			g.setComposite(AlphaComposite.SrcOver);
+			
 			g.fillOval(point.x-10, point.y-10, 20, 20);
+			
+			g.setFont(new Font("Serif", Font.PLAIN, 72));
+			g.drawString(""+numero, point.x+10, point.y+10);
 			g.dispose();
 		}
 	}
