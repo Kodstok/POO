@@ -232,7 +232,8 @@ public class TraitementImage {
 			
 			for(int j=-m; j< m;j++ )
 			{
-				sig1+= (imageG.getRed(a.x+i, a.y+j)-e)*(imageG.getRed(a.x+i,a.y+ j)-e);
+				if(imageG.isValidCoord(a.x+i,a.y+j))
+					sig1+= (imageG.getRed(a.x+i, a.y+j)-e)*(imageG.getRed(a.x+i,a.y+ j)-e);
 			}
 		}
 		sig1=sig1/((2*n+1)*(2*m+1));
@@ -241,8 +242,8 @@ public class TraitementImage {
 			
 			for(int j=-m; j< m;j++ )
 			{
-				
-				sig2 +=  (imageD.getRed(b.x+i,b.y+ j)-f)*(imageD.getRed(b.x+i,b.y+ j)-f);
+				if(imageD.isValidCoord(a.x+i,a.y+j))
+					sig2 +=  (imageD.getRed(b.x+i,b.y+ j)-f)*(imageD.getRed(b.x+i,b.y+ j)-f);
 			}
 		}
 		sig2=sig2/((2*n+1)*(2*m+1));
@@ -251,7 +252,8 @@ public class TraitementImage {
 			
 			for(int j=-m; j< m;j++ )
 			{
-				res +=  (imageG.getRed(a.x+i,a.y+ j)-e)*(imageD.getRed(b.x+i, b.y+j)-e);
+				if(imageG.isValidCoord(a.x+i,a.y+j))
+					res +=  (imageG.getRed(a.x+i,a.y+ j)-e)*(imageD.getRed(b.x+i, b.y+j)-e);
 			}
 		}
 		return res*1/(sig1*sig2);

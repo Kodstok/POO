@@ -36,19 +36,19 @@ public class Main {
 		try {
 			bookLeft = ImageIO.read(new File("book/book_left.jpg"));
 			bookRight = ImageIO.read(new File("book/book_right.jpg"));
-/*			
+			
 			bottleLeft = ImageIO.read(new File("bottle/bottle_left.jpg"));
 			bottleRight = ImageIO.read(new File("bottle/bottle_right.jpg"));
 			
 			emptyLeft = ImageIO.read(new File("empty/empty_right.jpg"));
 			emptyRight = ImageIO.read(new File("empty/empty_right.jpg"));
-*/			
+			
 			
 		} catch (IOException e) {
 			System.out.println("Probleme dans la lecture des fichiers : " + e.toString());
 		}
 		
-		TraitementImage t = new TraitementImage(bookLeft,bookRight);
+		TraitementImage t = new TraitementImage(bottleLeft,bottleRight);
 		System.out.println(t.toString());
 		
 

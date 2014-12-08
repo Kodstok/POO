@@ -86,7 +86,7 @@ public class ImagePointVert  {
 		int res=0;
 		i=i+incrementi;
 		j=j+ incrementj;
-		while(estVert(i,j))
+		while(isValidCoord(i,j)&&estVert(i,j))
 		{
 			res++;
 			i=i+incrementi;
@@ -106,6 +106,10 @@ public class ImagePointVert  {
 		}
 		return res;
 	}
+	public boolean isValidCoord(int x,int y)
+	{
+		return x > 0&& y >0 && x< img.getWidth() && y < img.getHeight();
+	}
 	
 	public int moyen( int n,int m, Coord a)
 	{
@@ -115,8 +119,11 @@ public class ImagePointVert  {
 		{
 			for(int j=-m; j< n;j++ )
 			{
-				res += getGrey(a.x+i,a.y+j) ;
-				c++;
+				if(isValidCoord(a.x+i,a.y+j))
+				{
+					res += getGrey(a.x+i,a.y+j) ;
+					c++;
+				}
 			}
 		}
 		return res/c;
