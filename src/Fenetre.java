@@ -25,8 +25,8 @@ public class Fenetre extends JFrame {
 	private int largeur = 2560, hauteur = 1920; 
 	
 	// on divise toutes les tailles en pixel par ce nombre 
-	// pour pouvoir afficher les images à l'ecran
-	private int coeffDeReduction = 4;
+	// pour pouvoir afficher les images �� l'ecran
+	private int coeffDeReduction = 3;
 
 	public Fenetre(BufferedImage _g, BufferedImage _d) throws HeadlessException {
 		super("Image de fond");

@@ -97,7 +97,7 @@ public class ImagePointVert  {
 	
 	public int cptptvg(Coord a)
 	{
-		int s = 25;
+		int s = 40;
 		int res=0;
 		for(Coord c : ptVert)
 		{
@@ -130,7 +130,7 @@ public class ImagePointVert  {
 	}
 	public Vector<Coord> getPtLigne(Coord a) {
 		Vector<Coord> res= new Vector<Coord>();
-		int s = 25;
+		int s = 30;
 		for(Coord c : ptVert)
 		{
 			if(Math.abs(a.y-c.y)<s)
