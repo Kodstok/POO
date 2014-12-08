@@ -23,48 +23,29 @@ public class Main {
 	
 	public static void main(String[] args) 
 	{
-		BufferedImage bookLeft =null;
-		BufferedImage bookRight=null;
+		BufferedImage left = null;
+		BufferedImage right = null;
 		
-		BufferedImage bottleLeft=null;
-		BufferedImage bottleRight=null;
-		
-		BufferedImage emptyLeft=null;
-		BufferedImage emptyRight=null;
-		
+		String folderPath = Fenetre.selectionDossier();
 
 		try {
-			bookLeft = ImageIO.read(new File("book/book_left.jpg"));
-			bookRight = ImageIO.read(new File("book/book_right.jpg"));
-			
-			bottleLeft = ImageIO.read(new File("bottle/bottle_left.jpg"));
-			bottleRight = ImageIO.read(new File("bottle/bottle_right.jpg"));
-			
-			emptyLeft = ImageIO.read(new File("empty/empty_right.jpg"));
-			emptyRight = ImageIO.read(new File("empty/empty_right.jpg"));
-			
-			
+			left = ImageIO.read(new File(folderPath+"left.jpg"));
+			right = ImageIO.read(new File(folderPath+"right.jpg"));
 		} catch (IOException e) {
 			System.out.println("Probleme dans la lecture des fichiers : " + e.toString());
 		}
 		
-		TraitementImage t = new TraitementImage(bottleLeft,bottleRight);
+		TraitementImage t = new TraitementImage(left,right);
 		System.out.println(t.toString());
 		
 
-		Fenetre f = new Fenetre();
+		Fenetre f = new Fenetre(left, right);
 
 		for(Entry<Coord, Coord> entry : t.map.entrySet())
 			f.marquerCouplePoints(entry);
 			
 		f.afficher();
 		
-		
-		//TraitementImage j = new TraitementImage(bottleLeft,bottleRight);
-
-		//TraitementImage k = new TraitementImage(emptyLeft,emptyRight);
-		
-
 	}
 
 }

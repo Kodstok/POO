@@ -5,13 +5,13 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -28,12 +28,12 @@ public class Fenetre extends JFrame {
 	// pour pouvoir afficher les images à l'ecran
 	private int coeffDeReduction = 4;
 
-	public Fenetre() throws HeadlessException {
+	public Fenetre(BufferedImage _g, BufferedImage _d) throws HeadlessException {
 		super("Image de fond");
 		largeur /= coeffDeReduction;
 		hauteur /= coeffDeReduction;
-		imageG = new imagePanel("book/book_left.jpg");
-		imageD = new imagePanel("book/book_right.jpg");
+		imageG = new imagePanel(_g);
+		imageD = new imagePanel(_d);
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(imageG, BorderLayout.WEST);
 		this.getContentPane().add(imageD, BorderLayout.EAST);
@@ -54,22 +54,14 @@ public class Fenetre extends JFrame {
 			nbPtsAjoutes++;
 			imageG.marquerPoint(pointImgG, nbPtsAjoutes);
 			imageD.marquerPoint(pointImgD, nbPtsAjoutes);
-			
-//			Graphics2D g = this.imageG.img.createGraphics();
-//			g.drawLine(pointImgG.x, pointImgG.y, pointImgD.x+largeur, pointImgD.y);
-//			g.dispose();
 		}
 	}
 	
 	public class imagePanel extends JPanel {
 		BufferedImage img;
-		public imagePanel(String cheminDuFichier) {
+		public imagePanel(BufferedImage _img) {
 			super();
-			try {
-				img = ImageIO.read(new File(cheminDuFichier));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			this.img = _img;
 			this.setPreferredSize(new Dimension(largeur, hauteur));
 		}
 
@@ -88,5 +80,15 @@ public class Fenetre extends JFrame {
 			g.drawString(""+numero, point.x+10, point.y+10);
 			g.dispose();
 		}
+	}
+	
+	public static String selectionDossier() {
+		JFileChooser choix = new JFileChooser();
+		choix.setCurrentDirectory(new File("./"));
+		choix.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		choix.setDialogTitle("Veuillez selectionner le dossier contenant vos deux images...");
+		if( choix.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) 
+			System.exit(ABORT);
+		return choix.getSelectedFile().getAbsolutePath() + "/";
 	}
 }
