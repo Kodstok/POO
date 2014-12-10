@@ -1,7 +1,6 @@
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -37,12 +36,12 @@ public class TraitementImage {
 		for(Coord a : imageG.ptVert)
 		{
 			Vector<Coord> ptLigne = imageD.getPtLigne(a);
-			tmp = 1;
+			tmp = 3;
 			res=null;
 			System.out.println("points sur la même ligne : "+ptLigne.size());
 			for(Coord b: ptLigne)
 			{
-				l = corelationRed(a,b);
+				l = corelationGrey(a,b);
 				if(l>=tmp )
 				{
 					tmp = l;
@@ -91,12 +90,13 @@ public class TraitementImage {
 	public ArrayList<Integer> calculerDecalagePourChaquePoints() {
 		return null;
 	}
-	
+
 	private double corelationGrey(Coord a,Coord b)
 	{
 		double res=0,sig1=0,sig2=0;
-		int n = 50;
-		int m = 100;
+		int n = 100;
+		int m = 200;
+		int c1=0,c2=0;
 		int e =imageG.moyen(n,m,a);
 		int f =imageD.moyen(n,m,a);
 		for(int i =-n; i < n;i++)
@@ -104,26 +104,39 @@ public class TraitementImage {
 			
 			for(int j=-m; j< m;j++ )
 			{
-				sig1+= (imageG.getGrey(a.x+i, a.y+j)-e)*(imageG.getGrey(a.x+i,a.y+ j)-e);
+				if(imageG.isValidCoord(a.x+i,a.y+j))
+				{
+					sig1+= (imageG.getGrey(a.x+i, a.y+j)-e)*(imageG.getGrey(a.x+i,a.y+ j)-e);
+					c2++;
+				}
 			}
+			if(imageG.isValidCoord(a.x+i,a.y))
+				c1++;
 		}
-		sig1=sig1/((2*n+1)*(2*m+1));
+		sig1=Math.sqrt(sig1)/((c1)*(c2));
+		c1=0;c2=0;
 		for(int i =-n; i < n;i++)
 		{
 			
 			for(int j=-m; j< m;j++ )
 			{
-				
-				sig2 +=  (imageD.getGrey(b.x+i,b.y+ j)-f)*(imageD.getGrey(b.x+i,b.y+ j)-f);
+				if(imageD.isValidCoord(b.x+i,b.y+j))
+				{
+					sig2 +=  (imageD.getGrey(b.x+i,b.y+ j)-f)*(imageD.getGrey(b.x+i,b.y+ j)-f);
+					c1++;
+				}
 			}
+			if(imageD.isValidCoord(b.x+i,b.y))
+				c2++;
 		}
-		sig2=sig2/((2*n+1)*(2*m+1));
+		sig2=Math.sqrt(sig2)/((c1)*(c2));
 		for(int i =-n; i < n;i++)
 		{
 			
 			for(int j=-m; j< m;j++ )
 			{
-				res +=  (imageG.getGrey(a.x+i,a.y+ j)-e)*(imageD.getGrey(b.x+i, b.y+j)-e);
+				if(imageG.isValidCoord(a.x+i,a.y+j)&&imageD.isValidCoord(b.x+i,b.y+j))
+					res +=  (imageG.getGrey(a.x+i,a.y+ j)-e)*(imageD.getGrey(b.x+i, b.y+j)-e);
 			}
 		}
 		return res*1/(sig1*sig2);
@@ -160,6 +173,7 @@ public class TraitementImage {
 		double res=0,sig1=0,sig2=0;
 		int n = 50;
 		int m = 100;
+		int c1=0,c2=0;
 		int e =imageG.moyen(n,m,a);
 		int f =imageD.moyen(n,m,a);
 		for(int i =-n; i < n;i++)
@@ -230,8 +244,9 @@ public class TraitementImage {
 	private double corelationRed(Coord a,Coord b)
 	{
 		double res=0,sig1=0,sig2=0;
-		int n = 50;
+		int n = 100;
 		int m = 100;
+		int c1=0,c2=0;
 		int e =imageG.moyen(n,m,a);
 		int f =imageD.moyen(n,m,a);
 		for(int i =-n; i < n;i++)
@@ -240,26 +255,37 @@ public class TraitementImage {
 			for(int j=-m; j< m;j++ )
 			{
 				if(imageG.isValidCoord(a.x+i,a.y+j))
+				{
 					sig1+= (imageG.getRed(a.x+i, a.y+j)-e)*(imageG.getRed(a.x+i,a.y+ j)-e);
+					c2++;
+				}
 			}
+			if(imageG.isValidCoord(a.x+i,a.y))
+				c1++;
 		}
-		sig1=sig1/((2*n+1)*(2*m+1));
+		sig1=Math.sqrt(sig1)/((c1)*(c2));
+		c1=0;c2=0;
 		for(int i =-n; i < n;i++)
 		{
 			
 			for(int j=-m; j< m;j++ )
 			{
-				if(imageD.isValidCoord(a.x+i,a.y+j))
+				if(imageD.isValidCoord(b.x+i,b.y+j))
+				{
 					sig2 +=  (imageD.getRed(b.x+i,b.y+ j)-f)*(imageD.getRed(b.x+i,b.y+ j)-f);
+					c1++;
+				}
 			}
+			if(imageD.isValidCoord(b.x+i,b.y))
+				c2++;
 		}
-		sig2=sig2/((2*n+1)*(2*m+1));
+		sig2=Math.sqrt(sig2)/((c1)*(c2));
 		for(int i =-n; i < n;i++)
 		{
 			
 			for(int j=-m; j< m;j++ )
 			{
-				if(imageG.isValidCoord(a.x+i,a.y+j))
+				if(imageG.isValidCoord(a.x+i,a.y+j)&&imageD.isValidCoord(b.x+i,b.y+j))
 					res +=  (imageG.getRed(a.x+i,a.y+ j)-e)*(imageD.getRed(b.x+i, b.y+j)-e);
 			}
 		}
